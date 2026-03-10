@@ -1,7 +1,7 @@
 # ML Forge
 
 A visual PyTorch pipeline editor. Build, train and run image classification models without writing code.
-
+![ML Forge screenshot](assets/screenshot.png)
 ---
 
 ## What it does
@@ -133,4 +133,4 @@ Projects are saved as `.mlf` files (JSON). Use **File → Save / Save As** or `C
 
 ## License
 
-MIT
+APACHE
