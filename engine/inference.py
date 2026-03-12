@@ -82,7 +82,7 @@ def open_inference_window() -> None:
         dpg.add_spacer(height=8)
 
         with dpg.group(horizontal=True):
-            dpg.add_button(label="New Sample", width=140, callback=_new_sample_only)
+            dpg.add_button(label="New Sample", width=140, callback=_new_sample)
             with dpg.theme() as blue_th:
                 with dpg.theme_component(dpg.mvButton):
                     dpg.add_theme_color(dpg.mvThemeCol_Button,        (40, 100, 160, 220))
@@ -306,7 +306,7 @@ def _run_on_current_sample() -> None:
     """Run inference on the currently loaded sample without fetching a new one."""
     if _state["last_sample"] is None:
         # No sample yet — load one first automatically
-        _new_sample_only()
+        _new_sample()
         if _state["last_sample"] is None:
             return
 
