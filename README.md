@@ -7,14 +7,13 @@ A visual PyTorch pipeline editor. Build, train and run image classification mode
 ![ML Forge screenshot](ml_forge/assets/showcase.gif)
 ---
 
-## MLForge v1.0.3
+## MLForge v1.0.4
 
 Additions:
-- Fixed missing package prefix on import in _build_criterion_and_optimizer
-- Preserved plot data in last_run on training completion so Metrics window works post-run
-- Implemented update_block_labels/reset_block_labels stubs with live epoch stats
-- Fixed GaussianBlur sigma range string parsing crashing at runtime
-- Derived _DATASET/_AUG/_LOSS/_OPTIMIZER_BLOCKS from blocks.SECTIONS
+- Patched segfault error on Mac during template loading
+- Added logo to splash loading widnow
+- Added hints to node pallete when hovering over certain nodes. 
+
 
 
 ## What it does
