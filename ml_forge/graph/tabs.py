@@ -21,8 +21,24 @@ def tab_tag(tid: int) -> str:
 
 # Accessors
 
+def _tab_id_from_selection(selection) -> int | None:
+    """Resolve a Dear PyGui tab-bar value or callback payload to a tab id."""
+    for tid, tab in state.tabs.items():
+        ttag = tab.get("tab_tag", tab_tag(tid))
+        if selection == ttag:
+            return tid
+        if (dpg.does_item_exist(ttag)
+                and selection == dpg.get_alias_id(ttag)):
+            return tid
+    return None
+
+
 def current_tab() -> dict | None:
     """Return the dict for the currently active tab, or None."""
+    if dpg.does_item_exist("canvas_tabbar"):
+        selected_tid = _tab_id_from_selection(dpg.get_value("canvas_tabbar"))
+        if selected_tid is not None:
+            state.active_tab_id = selected_tid
     return state.tabs.get(state.active_tab_id)
 
 
@@ -299,24 +315,18 @@ def sync_active_tab() -> None:
     Poll the tab bar every frame to keep state.active_tab_id in sync
     with whichever tab the user has clicked on.
 
-    dpg.get_value() on a tab_bar returns the internal integer ID of the
-    selected tab item - so we resolve each tab's tag to its item ID
-    via dpg.get_alias_id() before comparing.
+    Depending on the Dear PyGui version and tag configuration, the selected
+    value can be either the tab's string alias or its internal integer ID.
     """
     from ml_forge.ui.statusbar import refresh_status
 
     if not dpg.does_item_exist("canvas_tabbar"):
         return
 
-    selected_id = dpg.get_value("canvas_tabbar")
-    for tid in state.tabs:
-        ttag = tab_tag(tid)
-        if dpg.does_item_exist(ttag):
-            if dpg.get_alias_id(ttag) == selected_id:
-                if state.active_tab_id != tid:
-                    state.active_tab_id = tid
-                    refresh_status()
-                break
+    selected_tid = _tab_id_from_selection(dpg.get_value("canvas_tabbar"))
+    if selected_tid is not None and state.active_tab_id != selected_tid:
+        state.active_tab_id = selected_tid
+        refresh_status()
 
 
 # Tab bar change callback
@@ -324,13 +334,11 @@ def sync_active_tab() -> None:
 def on_tab_change(sender, app_data) -> None:
     """
     DearPyGui callback - fires when user clicks a tab.
-    app_data is the integer item ID of the newly selected tab.
+    app_data is the alias or integer item ID of the newly selected tab.
     """
     from ml_forge.ui.statusbar import refresh_status
 
-    for tid in state.tabs:
-        ttag = tab_tag(tid)
-        if dpg.does_item_exist(ttag) and dpg.get_alias_id(ttag) == app_data:
-            state.active_tab_id = tid
-            refresh_status()
-            break
+    selected_tid = _tab_id_from_selection(app_data)
+    if selected_tid is not None:
+        state.active_tab_id = selected_tid
+        refresh_status()
